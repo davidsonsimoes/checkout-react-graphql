@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Grid, Row, Col, PageHeader, Alert, Breadcrumb } from 'react-bootstrap';
 import Login from   '../components/login';
 import Register from   '../components/register';
 
@@ -14,6 +14,13 @@ export default class Example extends React.Component  {
               <PageHeader>
                 Venda de anúncios GDP
               </PageHeader>
+              <Breadcrumb>
+                <Breadcrumb.Item href="/">Home</Breadcrumb.Item>
+                <Breadcrumb.Item active>Login</Breadcrumb.Item>
+                </Breadcrumb>
+              <Alert bsStyle="warning">
+                <strong>Entre</strong> com seu login ou <strong>cadastre-se</strong> caso nao tenha acesso.
+              </Alert>
             </Col>
             <Col xs={3} md={1}></Col>
           </Row>

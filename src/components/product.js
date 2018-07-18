@@ -40,7 +40,7 @@ export default class Product extends React.Component  {
                   </FormGroup>
                 </Col>
                 <Col xs={6} md={6}>
-                  <Button bsStyle="default">COMPRAR</Button>
+                  <Button bsStyle="success">COMPRAR</Button>
                 </Col>
               </Row>
               </Form>
@@ -63,7 +63,7 @@ export default class Product extends React.Component  {
                   </FormGroup>
                 </Col>
                 <Col xs={6} md={6}>
-                  <Button bsStyle="default">COMPRAR</Button>
+                  <Button bsStyle="success">COMPRAR</Button>
                 </Col>
               </Row>
               </Form>
@@ -86,7 +86,7 @@ export default class Product extends React.Component  {
                   </FormGroup>
                 </Col>
                 <Col xs={6} md={6}>
-                  <Button bsStyle="default">COMPRAR</Button>
+                  <Button bsStyle="success">COMPRAR</Button>
                 </Col>
               </Row>
               </Form>
