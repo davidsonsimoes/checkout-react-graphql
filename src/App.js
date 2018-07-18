@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import Product from './components/product';
 import { Grid, Row, Col, Jumbotron } from 'react-bootstrap';
 
+import client from './services/Apollo';
+import { ApolloProvider } from "react-apollo";
+
 export default class Home extends React.Component  {
   render() {
     return (
@@ -19,7 +22,9 @@ export default class Home extends React.Component  {
                 </p>
               </Jumbotron>
 
-              <Product />
+              <ApolloProvider client={client}>
+                <Product />
+              </ApolloProvider>
             </Col>
             <Col xs={3} md={1}></Col>
           </Row>
