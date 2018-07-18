@@ -1,29 +1,27 @@
 import React from 'react';
-import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import { Link } from 'react-router-dom';
+import Product from './components/product';
+import { Grid, Row, Col, Jumbotron } from 'react-bootstrap';
 
 export default class Home extends React.Component  {
   render() {
     return (
       <div className="App">
+      <br/>
         <Grid>
           <Row>
             <Col xs={3} md={1}></Col>
             <Col xs={6} md={10}>
-              <PageHeader>
-                Venda de anúncios GDP
-              </PageHeader>
+              <Jumbotron>
+                <h1>Venda de anúncios GDP</h1>
+                <p>
+                  Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende, caso nao esteja logado será solicitado o login ou <Link to="/login">entre agora</Link> com seus dados.
+                </p>
+              </Jumbotron>
+
+              <Product />
             </Col>
             <Col xs={3} md={1}></Col>
-          </Row>
-          <Row className="show-grid">
-            <Col md={1}></Col>
-            <Col xs={6} md={4}>
-              home
-            </Col>
-            <Col xs={6} md={6}>
-              teste
-            </Col>
-            <Col md={1}></Col>
           </Row>
         </Grid>
       </div>
