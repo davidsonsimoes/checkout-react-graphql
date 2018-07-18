@@ -1,7 +1,9 @@
 import React from 'react';
 import { Grid, Row, Col, PageHeader } from 'react-bootstrap';
+import Login from   '../components/login';
+import Register from   '../components/register';
 
-export default class Home extends React.Component  {
+export default class Example extends React.Component  {
   render() {
     return (
       <div className="App">
@@ -18,10 +20,10 @@ export default class Home extends React.Component  {
           <Row className="show-grid">
             <Col md={1}></Col>
             <Col xs={6} md={4}>
-              home
+              <Login />
             </Col>
             <Col xs={6} md={6}>
-              teste
+              <Register />
             </Col>
             <Col md={1}></Col>
           </Row>
