@@ -23,8 +23,19 @@ const FormControl = styled.input`
   margin: 0 10px
 `;
 
-// Fetch GraphQL data with a Query component
-const ExchangeRates = () => (
+const formatReal = (int) => {
+    let tmp = int+'';
+    tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
+    if( tmp.length > 6 )
+            tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1.$2");
+    return tmp;
+}
+
+const validateQtd = (int) => {
+    console.log('teste')
+}
+
+const ProductItem = () => (
     <Query
       query={gql`
         {
@@ -46,19 +57,19 @@ const ExchangeRates = () => (
                     <Image src="/thumbnaildiv.png"  />
                     <ContentThumb>
                     <h3>{name}</h3>
-                    <p>Preço: <Badge>{price}</Badge></p>
+                    <p>Preço: <Badge>${formatReal(price)}</Badge></p>
                     <hr />
                     <Form inline>
                     <Row>
-                        <Col xs={6} md={6}>
-                        <FormGroup controlId="formInlineName">
-                            <ControlLabel>QTD:</ControlLabel> 
-                            <FormControl type="number" placeholder="Ex: 1" />
+                        <FormGroup controlId="formInlineName" validationState={validateQtd()}>
+                            <Col xs={6} md={6}>
+                                <ControlLabel>QTD:</ControlLabel> 
+                                <FormControl type="number" placeholder="Ex: 1" />
+                            </Col>
+                            <Col xs={6} md={6}>
+                                <Button bsStyle="success">COMPRAR</Button>
+                            </Col>
                         </FormGroup>
-                        </Col>
-                        <Col xs={6} md={6}>
-                        <Button bsStyle="success">COMPRAR</Button>
-                        </Col>
                     </Row>
                     </Form>
                     </ContentThumb>
@@ -70,11 +81,14 @@ const ExchangeRates = () => (
   );
 
 export default class Product extends React.Component {
+  validateQtd() {
+      console.log('teste')
+  }
   render() {
       console.log(this.props);
     return (
         <Row>
-            <ExchangeRates />
+            <ProductItem  />
         </Row>
     );
   }
