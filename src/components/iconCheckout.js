@@ -38,7 +38,7 @@ export default class iconCheckout extends React.Component  {
             <Fade in={this.props.isActive}>
                 <Link to="/login">
                     <ContentIconCheckout>
-                        <NumberQtd>1</NumberQtd>
+                        <NumberQtd>{this.props.qtd}</NumberQtd>
                         <Glyphicon glyph="glyphicon glyphicon-shopping-cart" />
                     </ContentIconCheckout>
                 </Link>
