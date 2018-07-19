@@ -1,15 +1,17 @@
 import React from 'react';
 import { Row, Col, Button, Thumbnail, Badge, FormGroup, ControlLabel, Form } from 'react-bootstrap';
-
+import IconCheckout from './iconCheckout';
 import { Query } from "react-apollo";
 import gql from 'graphql-tag';
+import swal from 'sweetalert';
 
 import styled from 'styled-components';
 
 const Image = styled.img`
-  width: 242px;
+  max-width: 242px;
+  width: 100%;
   display: block;
-  height: 200px;
+  height: auto;
   margin: 10px auto
 `;
 const ContentThumb = styled.div`
@@ -31,11 +33,18 @@ const formatReal = (int) => {
     return tmp;
 }
 
-const validateQtd = (int) => {
-    console.log('teste')
+const handleProduct = (id) => {
+    const element = document.querySelector(`#${id}`);
+
+    if(element.value > 0){
+        console.log(IconCheckout);
+    } else {
+        swal("Ops!", "Escolha a quantidade do produto.", "error");
+    }
+
 }
 
-const ProductItem = () => (
+const ProductItem = (props) => (
     <Query
       query={gql`
         {
@@ -46,8 +55,9 @@ const ProductItem = () => (
           }
         }
       `}
-    >
-      {({ loading, error, data }) => {
+    >   
+        
+      {({ loading, error, data, props }) => {
         if (loading) return <p>Loading...</p>;
         if (error) return <p>Error :(</p>;
   
@@ -61,13 +71,13 @@ const ProductItem = () => (
                     <hr />
                     <Form inline>
                     <Row>
-                        <FormGroup controlId="formInlineName" validationState={validateQtd()}>
+                        <FormGroup controlId="formInlineName">
                             <Col xs={6} md={6}>
                                 <ControlLabel>QTD:</ControlLabel> 
-                                <FormControl type="number" placeholder="Ex: 1" />
+                                <FormControl type="number" id={id} placeholder="Ex: 1" />
                             </Col>
                             <Col xs={6} md={6}>
-                                <Button bsStyle="success">COMPRAR</Button>
+                                <Button bsStyle="success" onClick={() => handleProduct(id)}>COMPRAR</Button>
                             </Col>
                         </FormGroup>
                     </Row>
@@ -81,14 +91,11 @@ const ProductItem = () => (
   );
 
 export default class Product extends React.Component {
-  validateQtd() {
-      console.log('teste')
-  }
   render() {
-      console.log(this.props);
     return (
         <Row>
-            <ProductItem  />
+            <ProductItem />
+            <IconCheckout isActive={false} />
         </Row>
     );
   }
