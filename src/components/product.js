@@ -1,11 +1,12 @@
 import React from 'react';
-import { Row, Col, Button, Thumbnail, Badge, FormGroup, ControlLabel, Form } from 'react-bootstrap';
+import { Row, Col, Button, Thumbnail, Badge, FormGroup, ControlLabel, Form, Label } from 'react-bootstrap';
 import IconCheckout from './iconCheckout';
 import gql from 'graphql-tag';
 import swal from 'sweetalert';
 import client from '../services/Apollo'
-
 import styled from 'styled-components';
+
+const session = sessionStorage.getItem('loginId');
 
 const Image = styled.img`
   max-width: 242px;
@@ -23,6 +24,15 @@ const FormControl = styled.input`
   line-height: 30px;
   text-align: center;
   margin: 0 0 0 10px
+`;
+const BoxDiscount = styled.div`
+    position: absolute;
+    top: 57px;
+    width: 90%;
+    background-color: #8a8a8a;
+    color: #ffffff;
+    padding: 10px 0;
+    margin-left: -4%;
 `;
 
 export default class Product extends React.Component {
@@ -61,15 +71,26 @@ export default class Product extends React.Component {
                         id
                         name
                         price
+                        discount {
+                            id
+                        }
                     }
                 }
             `
             })
         .then(result => data = result);
         this.setState({data: data.data.allProducts})
+        console.log(this.state.data);
+  }
+  checkDiscount(id) {
+      console.log(id, this.props.discount.discount.product.id);
+      if(id === this.props.discount.discount.product.id) {
+          return true
+      }
   }
   componentWillMount() {
-    this.getDataProduct()
+    this.getDataProduct();
+    console.log(this.state.data);
   }
   render() {
     return (
@@ -80,6 +101,7 @@ export default class Product extends React.Component {
                         <Image src="/thumbnaildiv.png"  />
                         <ContentThumb>
                         <h3>{name}</h3>
+                        {this.checkDiscount(id) ? <BoxDiscount><Label bsStyle="danger">PROMOÇÃO</Label> especial para sua empresa</BoxDiscount> : ''}
                         <p>Preço: <Badge>${this.formatReal(price)}</Badge></p>
                         <hr />
                         <Form inline>

@@ -43,7 +43,8 @@ export default class Home extends React.Component  {
         id: '',
         company: '',
         isAuthenticated: false,
-        isLoading: true
+        isLoading: true,
+        discount: null
     };
 }
   logout(e) {
@@ -62,7 +63,18 @@ export default class Home extends React.Component  {
             Profile(id: "${session}"){
               id,
               name,
-              company
+              company {
+                id,
+                name,
+                discount {
+                  quantity,
+                  discount,
+                  product {
+                    name,
+                    id
+                  }
+                }
+              }
             }
           }
         `
@@ -73,8 +85,9 @@ export default class Home extends React.Component  {
         isAuthenticated: true,
         name: data.data.Profile.name,
         id: data.data.Profile.id,
-        company: data.data.Profile.company,
-        isLoading: false
+        company: data.data.Profile.company.name,
+        isLoading: false,
+        discount: data.data.Profile.company
       })
     }
 }
@@ -103,9 +116,14 @@ export default class Home extends React.Component  {
               <Col xs={3} md={1}></Col>
               <Col xs={6} md={10}>
                 {this.state.isAuthenticated ? 
-                  <Alert bsStyle="info">
-                  <strong>Bem vindo {this.state.name}</strong>!<br/> Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende.
-                </Alert> : 
+                  <div>
+                    <Alert bsStyle="info">
+                      <strong>Bem vindo {this.state.name}</strong>!<br/> Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende.
+                    </Alert>
+                    <ApolloProvider client={client}>
+                      <Product discount={this.state.discount} />
+                    </ApolloProvider>
+                  </div>  : 
                 <div><br/>
                 <Jumbotron>
                     <h1>Venda de anúncios GDP</h1>
@@ -113,11 +131,11 @@ export default class Home extends React.Component  {
                       Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende, caso nao esteja logado será solicitado o login ou <Link to="/login">entre agora</Link> com seus dados.
                     </p>
                   </Jumbotron>
+                  <ApolloProvider client={client}>
+                    <Product />
+                  </ApolloProvider>
                 </div>
                 }
-                <ApolloProvider client={client}>
-                  <Product />
-                </ApolloProvider>
               </Col>
               <Col xs={3} md={1}></Col>
             </Row>
