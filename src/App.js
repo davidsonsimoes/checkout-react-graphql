@@ -55,7 +55,6 @@ export default class Home extends React.Component  {
     this.loginSession();
   }
   async checkDiscount(company) {
-    console.log(company);
     let data = [];
     await client.query({
         query: gql`
@@ -63,8 +62,9 @@ export default class Home extends React.Component  {
           allDiscounts{
             id
             discount
-            company,
+            company
             quantity
+            product
           }
         }
         `
@@ -75,7 +75,9 @@ export default class Home extends React.Component  {
         return task; 
       } 
     });
-  console.log(countries, data);
+    this.setState({
+      discount: countries
+    })
 }
   async getData() {
     let data = [];
@@ -91,7 +93,6 @@ export default class Home extends React.Component  {
         `
         })
     .then(result => data = result.data);
-    console.log(data);
     if(data.Profile){
       this.checkDiscount(data.Profile.company);
       this.setState({
@@ -99,8 +100,7 @@ export default class Home extends React.Component  {
         name: data.Profile.name,
         id: data.Profile.id,
         company: data.Profile.company,
-        isLoading: false,
-        discount: data.Profile.company
+        isLoading: false
       }) 
     } else {
       this.logout()

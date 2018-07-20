@@ -71,26 +71,33 @@ export default class Product extends React.Component {
                         id
                         name
                         price
-                        discount {
-                            id
-                        }
                     }
                 }
             `
             })
-        .then(result => data = result);
-        this.setState({data: data.data.allProducts})
+        .then(result => data = result.data);
+        console.log(data, this.props.discount);
+        this.setState({data: data.allProducts})
   }
   checkDiscount(id) {
+      if(!session){
+          return
+      }
       console.log(this.props.discount);
-    //   if(this.props.discount && id === this.props.discount.discount.product.id) {
-    //       return true
-    //   }
+        for (let i = 0; i < this.props.discount.length; i++) { 
+            console.log(this.props.discount[i].product.id);
+            if(session && this.props.discount[i].product.id === id) {
+                return true
+            }
+        }
   }
   componentWillMount() {
     this.getDataProduct();
   }
   render() {
+    if(session && !this.props.discount) {
+        return null
+    }
     return (
         <div> 
             {this.state.data.map(({ id, name, price }) => (
@@ -99,7 +106,7 @@ export default class Product extends React.Component {
                         <Image src="/thumbnaildiv.png"  />
                         <ContentThumb>
                         <h3>{name}</h3>
-                        {this.checkDiscount(id) ? <BoxDiscount><Label bsStyle="danger">PROMOÇÃO</Label> especial para sua empresa</BoxDiscount> : ''}
+                        {/* {this.checkDiscount(id) ? <BoxDiscount><Label bsStyle="danger">PROMOÇÃO</Label> especial para sua empresa</BoxDiscount> : ''} */}
                         <p>Preço: <Badge>${this.formatReal(price)}</Badge></p>
                         <hr />
                         <Form inline>
