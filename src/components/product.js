@@ -40,9 +40,9 @@ export default class Product extends React.Component {
     }
 
     handleProduct = (id) => {
-        const element = document.querySelector(`#${id}`);
-        if(element.value > 0){
-            let qtd = this.state.qtd + parseInt(element.value);
+        const element = document.querySelector(`#${id}`).value;
+        if(element > 0){
+            let qtd = this.state.qtd + parseInt(element.substring(element.length - 1), 10);
             this.setState({
                 isCheckoutVisible: true,
                 qtd: qtd

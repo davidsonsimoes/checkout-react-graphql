@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Panel } from 'react-bootstrap';
 import swal from 'sweetalert';
 import gql from 'graphql-tag';
-import client from '../services/Apollo'
+import client from '../services/Apollo';
 
 export default class register extends React.Component  {
     constructor(props, context) {
@@ -39,10 +39,10 @@ export default class register extends React.Component  {
           });
           const addedCompany = response.data;
           this.setState({ isLoading: false });
-          if(addedCompany.result.company.toUpperCase() == 'UNILEVER' ||
-                addedCompany.result.company.toUpperCase() == 'APPLE' ||
-                addedCompany.result.company.toUpperCase() == 'NIKE' ||
-                addedCompany.result.company.toUpperCase() == 'FORD'){
+          if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
+                addedCompany.result.company.toUpperCase() === 'APPLE' ||
+                addedCompany.result.company.toUpperCase() === 'NIKE' ||
+                addedCompany.result.company.toUpperCase() === 'FORD'){
             swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
                 window.location.href = '/';
             });
@@ -52,16 +52,16 @@ export default class register extends React.Component  {
             });
           }
         } catch (error) {
-            error = error.toString();
-            error.includes("Details: Field name = email") ? swal("Ops!", "Email já registrado.", "error") : '';
+            let errorStr = error.toString();
             this.setState({ isLoading: false });
+            return errorStr.includes("Details: Field name = email") ? swal("Ops!", "Email já registrado.", "error") : '';
         } 
     }
     checkValidationForm() {
-        if(this.state.company != '',
-        this.state.name != '',
+        if(this.state.company !== '',
+        this.state.name !== '',
         this.validateEmail(this.state.email),
-        (this.state.rePassword != '' && this.state.password == this.state.rePassword)) { return true }
+        (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
     }
     validateEmail(email){
         let re = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
@@ -73,14 +73,13 @@ export default class register extends React.Component  {
     }
     getValidationState(e) {
         e.preventDefault();
-        this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '' ;
+        this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '';
         this.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
-        this.state.rePassword == '' ? swal("Ops!", "Repita sua senha.", "error") : '';
-        this.state.password == '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
-        this.state.email == '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
-        this.state.company == '' ? swal("Ops!", "Preencha sua empresa.", "error") : '';
-        this.state.name == '' ? swal("Ops!", "Preencha seu nome.", "error") : '';
-
+        this.state.rePassword === '' ? swal("Ops!", "Repita sua senha.", "error") : '';
+        this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
+        this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
+        this.state.company === '' ? swal("Ops!", "Preencha sua empresa.", "error") : '';
+        this.state.name === '' ? swal("Ops!", "Preencha seu nome.", "error") : '';
         this.checkValidationForm() ? this.submitRegister() : '';
     }
     
@@ -100,6 +99,8 @@ export default class register extends React.Component  {
                 break;
             case "rePassword":
                 this.setState({ rePassword: e.target.value });
+                break;
+            default:
                 break;
         }
     }
