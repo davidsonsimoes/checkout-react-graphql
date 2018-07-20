@@ -28,26 +28,22 @@ export default class register extends React.Component  {
                     email: "${this.state.email}"
                     name: "${this.state.name}"
                     password: "${this.state.password}"
-                    company: {
-                        name: "${this.state.company}"
-                    }
+                    company: "${this.state.company}"
                 ) {
                     id,
                     name,
-                    company {
-                        name
-                    }
+                    company
                 }
               }
             `
           });
           const addedCompany = response.data;
           this.setState({ isLoading: false });
-          if(addedCompany.result.company.name.toUpperCase() === 'UNILEVER' ||
-                addedCompany.result.company.name.toUpperCase() === 'APPLE' ||
-                addedCompany.result.company.name.toUpperCase() === 'NIKE' ||
-                addedCompany.result.company.name.toUpperCase() === 'FORD'){
-            swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company.name}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
+          if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
+                addedCompany.result.company.toUpperCase() === 'APPLE' ||
+                addedCompany.result.company.toUpperCase() === 'NIKE' ||
+                addedCompany.result.company.toUpperCase() === 'FORD'){
+            swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
                 sessionStorage.setItem('loginId', addedCompany.result.id);
                 window.location.href = '/';
             });

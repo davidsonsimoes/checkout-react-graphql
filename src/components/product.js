@@ -80,17 +80,15 @@ export default class Product extends React.Component {
             })
         .then(result => data = result);
         this.setState({data: data.data.allProducts})
-        console.log(this.state.data);
   }
   checkDiscount(id) {
-      console.log(id, this.props.discount.discount.product.id);
-      if(id === this.props.discount.discount.product.id) {
-          return true
-      }
+      console.log(this.props.discount);
+    //   if(this.props.discount && id === this.props.discount.discount.product.id) {
+    //       return true
+    //   }
   }
   componentWillMount() {
     this.getDataProduct();
-    console.log(this.state.data);
   }
   render() {
     return (

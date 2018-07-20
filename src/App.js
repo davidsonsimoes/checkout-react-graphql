@@ -47,14 +47,36 @@ export default class Home extends React.Component  {
         discount: null
     };
 }
-  logout(e) {
-    e.preventDefault();
+  logout() {
     sessionStorage.removeItem('loginId');
     window.location.href = '/';
   }
   componentWillMount() {
     this.loginSession();
   }
+  async checkDiscount(company) {
+    console.log(company);
+    let data = [];
+    await client.query({
+        query: gql`
+        {
+          allDiscounts{
+            id
+            discount
+            company,
+            quantity
+          }
+        }
+        `
+        })
+    .then(result => data = result);
+    var countries = data.data.allDiscounts.filter(function (task, index, array) {
+      if(task.company.toUpperCase() == company.toUpperCase()){
+        return task; 
+      } 
+    });
+  console.log(countries, data);
+}
   async getData() {
     let data = [];
     await client.query({
@@ -63,32 +85,25 @@ export default class Home extends React.Component  {
             Profile(id: "${session}"){
               id,
               name,
-              company {
-                id,
-                name,
-                discount {
-                  quantity,
-                  discount,
-                  product {
-                    name,
-                    id
-                  }
-                }
-              }
+              company
             }
           }
         `
         })
-    .then(result => data = result);
-    if(data.data.Profile.id){
+    .then(result => data = result.data);
+    console.log(data);
+    if(data.Profile){
+      this.checkDiscount(data.Profile.company);
       this.setState({
         isAuthenticated: true,
-        name: data.data.Profile.name,
-        id: data.data.Profile.id,
-        company: data.data.Profile.company.name,
+        name: data.Profile.name,
+        id: data.Profile.id,
+        company: data.Profile.company,
         isLoading: false,
-        discount: data.data.Profile.company
-      })
+        discount: data.Profile.company
+      }) 
+    } else {
+      this.logout()
     }
 }
   loginSession() {
