@@ -36,7 +36,7 @@ export default class Login extends React.Component  {
             <Form>
                 <Row>
                 <Col sm={12}>
-                    <FormGroup controlId="formBasicText">
+                    <FormGroup>
                     <ControlLabel>E-mail</ControlLabel>
                     <FormControl type="email" placeholder="Email" />
                     </FormGroup>
@@ -44,7 +44,7 @@ export default class Login extends React.Component  {
                 </Row>
                 <Row>
                 <Col sm={12}>
-                    <FormGroup controlId="formBasicText">
+                    <FormGroup>
                         <ControlLabel>Senha</ControlLabel>
                         <FormControl type="senha" placeholder="Senha" />
                     </FormGroup>

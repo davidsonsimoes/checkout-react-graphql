@@ -18,11 +18,11 @@ const ContentThumb = styled.div`
   text-align: center;
 `;
 const FormControl = styled.input`
-  width: 60px;
-  height: 30px;
+  width: 50px;
+  height: 35px;
   line-height: 30px;
   text-align: center;
-  margin: 0 10px
+  margin: 0 0 0 10px
 `;
 
 export default class Product extends React.Component {
