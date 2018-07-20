@@ -43,11 +43,11 @@ export default class register extends React.Component  {
                 addedCompany.result.company.toUpperCase() == 'APPLE' ||
                 addedCompany.result.company.toUpperCase() == 'NIKE' ||
                 addedCompany.result.company.toUpperCase() == 'FORD'){
-            swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(() => {
+            swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
                 window.location.href = '/';
             });
         } else {
-            swal("Cadastro Realizado!", "Confira nossa lista de anúncios.", "success", { button: "Conferir" }).then(() => {
+            swal("Cadastro Realizado!", "Confira nossa lista de anúncios.", "success", { button: "Conferir" }).then(()=>{
                 window.location.href = '/';
             });
           }
@@ -55,8 +55,13 @@ export default class register extends React.Component  {
             error = error.toString();
             error.includes("Details: Field name = email") ? swal("Ops!", "Email já registrado.", "error") : '';
             this.setState({ isLoading: false });
-        }
-      
+        } 
+    }
+    checkValidationForm() {
+        if(this.state.company != '',
+        this.state.name != '',
+        this.validateEmail(this.state.email),
+        (this.state.rePassword != '' && this.state.password == this.state.rePassword)) { return true }
     }
     validateEmail(email){
         let re = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
@@ -68,28 +73,15 @@ export default class register extends React.Component  {
     }
     getValidationState(e) {
         e.preventDefault();
-        this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '';
+        this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '' ;
         this.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
         this.state.rePassword == '' ? swal("Ops!", "Repita sua senha.", "error") : '';
         this.state.password == '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
         this.state.email == '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
         this.state.company == '' ? swal("Ops!", "Preencha sua empresa.", "error") : '';
         this.state.name == '' ? swal("Ops!", "Preencha seu nome.", "error") : '';
-        
-        console.log(this.state.rePassword, 
-            this.state.password, 
-            this.state.email,
-            this.state.company,
-            this.state.name,
-            this.validateEmail(this.state.email),
-            this.state.rePassword != this.state.password);
-        this.state.rePassword, 
-        this.state.password, 
-        this.state.email,
-        this.state.company,
-        this.state.name,
-        this.validateEmail(this.state.email),
-        this.state.rePassword === this.state.password ? this.submitRegister() : '' ;
+
+        this.checkValidationForm() ? this.submitRegister() : '';
     }
     
     handleChange(e) {
