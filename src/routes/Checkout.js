@@ -15,15 +15,23 @@ const LinkRemove = styled.a`
   margin: 0 auto;
 `;
 
-export default class Login extends React.Component  {
+export default class Checkout extends React.Component  {
     constructor(props, context) {
         super(props, context);
-
+        
         this.state = {
             email: '',
             password: '',
-            data: []
+            data: [],
+            totalPrice: 0
         };
+    }
+    formatReal = (int) => {
+      let tmp = int+'';
+      tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
+      if( tmp.length > 6 )
+              tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1.$2");
+      return tmp;
     }
     async getCartItems() {
         let data = [];
@@ -36,15 +44,27 @@ export default class Login extends React.Component  {
                     quantity
                     price
                     product
+                    total
                   }
                 }
               }
             `
             })
         .then(result => data = result.data); 
+        console.log(data);
         this.setState({
           data: data.Profile.carts
         })
+        this.totalPrice();
+  }
+  totalPrice(){
+    var sum = 0;
+    for (var i = 0; i < this.state.data.length; i++) {
+        sum += this.state.data[i].total
+    }
+    this.setState({
+      totalPrice: sum
+    })
   }
   async removeItemCart(id){
     let response = await client.mutate({
@@ -53,13 +73,14 @@ export default class Login extends React.Component  {
             removeFromProfileOnCart(
               cartsCartId: "${id}", 
               profileProfileId: "${session}"){
-              profileProfile {
-                id
-                carts {
-                quantity
-                price
-                product
-              }
+                profileProfile {
+                  id
+                  carts {
+                  quantity
+                  price
+                  product
+                  total
+                }
               }
             }
           }`
@@ -67,10 +88,13 @@ export default class Login extends React.Component  {
       this.setState({
         data: response.data.removeFromProfileOnCart.profileProfile.carts
       })
+      this.totalPrice()
+      window.location.href = '/checkout'
   }
-  componentWillMount(){
+  componentDidMount(){
     if(session){
       this.getCartItems();
+      // window.location.href = '/checkout'
     } else {
       window.location.href = "/login"
     }
@@ -101,25 +125,27 @@ export default class Login extends React.Component  {
                   <th></th>
                   <th>Produto</th>
                   <th>Quantidade</th>
-                  <th width="150">Preço</th>
+                  <th width="170">Preço Unidade</th>
                   <th width="200">Total</th>
+                  <th width="200">Total com desconto</th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.data.map(({ id, quantity, price, product }) => (
+                {this.state.data.map(({ id, quantity, price, product, total }) => (
                   <tr key={id}>
                     <td>
                       <LinkRemove onClick={() => this.removeItemCart(id)}><Glyphicon glyph="glyphicon glyphicon-trash" /></LinkRemove>
                     </td>
                     <td>{product}</td>
                     <td>{quantity}</td>
-                    <td>{price}</td>
-                    <td>$969.99</td>
+                    <td>${this.formatReal(price)}</td>
+                    <td>${this.formatReal(total)}</td>
+                    <td>${this.formatReal(total)}</td>
                   </tr>
                 ))}
                 <tr>
-                  <td colSpan="3"></td>
-                  <td><br/><h4>Subtotal: 5.343</h4></td>
+                  <td colSpan="4"></td>
+                  <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? this.formatReal(this.state.totalPrice) : ''}</h4></td>
                   <td><h2>Total: 4.343</h2></td>
                 </tr>
               </tbody>

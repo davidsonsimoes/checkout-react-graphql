@@ -70,7 +70,6 @@ export default class Product extends React.Component {
          for (var i = 0; i < data.Profile.carts.length; i++) {
             sum += data.Profile.carts[i].quantity
         }   
-        console.log(data.Profile.carts);
         if(sum > 0){
             this.setState({
                 isCheckoutVisible: true,
@@ -79,6 +78,7 @@ export default class Product extends React.Component {
         }
   }
     async registerCart(name, price, qtd){
+        let total = qtd * price;
         await client.mutate({
             mutation: gql`
                 mutation {
@@ -87,6 +87,7 @@ export default class Product extends React.Component {
                         product: "${name}"
                         quantity: ${qtd}
                         profileId: "${session}"
+                        total: ${total}
                 ){
                     id
                     quantity
@@ -137,7 +138,7 @@ export default class Product extends React.Component {
   }
   componentWillMount() {
     this.getDataProduct();
-    this.getQuantityCart();
+    session ? this.getQuantityCart() : '';
   }
   render() {
     if(session && !this.props.discount) {
