@@ -3,6 +3,8 @@ import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 import { Glyphicon, Fade } from 'react-bootstrap';
 
+const session = sessionStorage.getItem('loginId');
+
 const ContentIconCheckout = styled.div`
     background-color: #eee;
     height: 80px;
@@ -36,7 +38,7 @@ export default class iconCheckout extends React.Component  {
     return (
         <div>
             <Fade in={this.props.isActive}>
-                <Link to="/login">
+                <Link to={session ? "/checkout" : "/login"}>
                     <ContentIconCheckout>
                         <NumberQtd>{this.props.qtd}</NumberQtd>
                         <Glyphicon glyph="glyphicon glyphicon-shopping-cart" />
