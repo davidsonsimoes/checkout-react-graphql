@@ -4,7 +4,6 @@ import Product from './components/product';
 import { Grid, Row, Col, Jumbotron, Alert } from 'react-bootstrap';
 import client from './services/Apollo';
 import { ApolloProvider } from "react-apollo";
-import gql from 'graphql-tag';
 import styled from 'styled-components';
 import staticUtils, { utilsManager }  from './utils/Utils';
 import Services from './services/Services';
@@ -60,7 +59,7 @@ export default class Home extends React.Component  {
     })
   }
   async getData() {
-    let data = await Services.getDataLogin(this.state.isAuthenticated);
+    let data = await Services.getDataLogin();
     if(data){
       this.checkDiscount(data.company);
       this.setState({

@@ -1,12 +1,10 @@
 import React from 'react';
 import { Row, Col, Button, Thumbnail, Badge, FormGroup, ControlLabel, Form, Label } from 'react-bootstrap';
 import IconCheckout from './iconCheckout';
-import gql from 'graphql-tag';
 import swal from 'sweetalert';
-import client from '../services/Apollo'
 import styled from 'styled-components';
-
-const session = sessionStorage.getItem('loginId');
+import staticUtils, { utilsManager }  from '../utils/Utils';
+import Services from '../services/Services';
 
 const Image = styled.img`
   max-width: 242px;
@@ -42,30 +40,12 @@ export default class Product extends React.Component {
         this.state = {
             data: [],
             isCheckoutVisible: false,
-            qtd: 0
+            qtd: 0,
+            isAuthenticated: utilsManager.isAuthenticated()
         };
     }
-    formatReal = (int) => {
-        let tmp = int+'';
-        tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
-        if( tmp.length > 6 )
-                tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1.$2");
-        return tmp;
-    }
     async getQuantityCart() {
-        let data = [];
-        await client.query({
-            query: gql`{
-                Profile(id: "${session}"){
-                  id,
-                  carts{
-                    quantity
-                  }
-                }
-              }
-            `
-            })
-        .then(result => data = result.data);
+        let data = await Services.getDataQuantityCart();
         var sum = 0;
          for (var i = 0; i < data.Profile.carts.length; i++) {
             sum += data.Profile.carts[i].quantity
@@ -76,31 +56,12 @@ export default class Product extends React.Component {
                 qtd: sum
             });
         }
-  }
-    async registerCart(name, price, qtd){
-        let total = qtd * price;
-        await client.mutate({
-            mutation: gql`
-                mutation {
-                    createCart (
-                        price: ${price}
-                        product: "${name}"
-                        quantity: ${qtd}
-                        profileId: "${session}"
-                        total: ${total}
-                ){
-                    id
-                    quantity
-                    product
-                }
-            }`
-          });
     }
     handleProduct(id, name, price){
         const element = document.querySelector(`#${id}`).value;
         if(element > 0){
             let qtd = this.state.qtd + parseInt(element.substring(element.length - 1));
-            this.registerCart(name, price, element)
+            utilsManager.registerDataCart(name, price, element)
             this.setState({
                 isCheckoutVisible: true,
                 qtd: qtd
@@ -109,39 +70,26 @@ export default class Product extends React.Component {
             swal("Ops!", "Escolha a quantidade do produto.", "error");
         }
     }
-  async getDataProduct() {
-        let data = [];
-        await client.query({
-            query: gql`
-                {
-                    allProducts {
-                        id
-                        name
-                        price
-                        productId
-                    }
-                }
-            `
-            })
-        .then(result => data = result.data);
-        this.setState({data: data.allProducts})
+  async getProduct() {
+    let data = await Services.getDataProduct();
+    this.setState({data: data.allProducts})
   }
   checkDiscount(company) {
-      if(!session){
+      if(!this.state.isAuthenticated){
           return
       }
       for (let i = 0; i < this.props.discount.length; i++) { 
-        if(session && this.props.discount[i].product === company) {
+        if(this.state.isAuthenticated && this.props.discount[i].product === company) {
             return true
         }
      }
   }
   componentWillMount() {
-    this.getDataProduct();
-    session ? this.getQuantityCart() : '';
+    this.getProduct();
+    this.state.isAuthenticated ? this.getQuantityCart() : '';
   }
   render() {
-    if(session && !this.props.discount) {
+    if(this.state.isAuthenticated && !this.props.discount) {
         return null
     }
     return (
@@ -153,7 +101,7 @@ export default class Product extends React.Component {
                         <ContentThumb>
                         <h3>{name}</h3>
                         {this.checkDiscount(productId) ? <BoxDiscount><Label bsStyle="danger">PROMOÇÃO</Label> especial para sua empresa</BoxDiscount> : ''}
-                        <p>Preço: <Badge>${this.formatReal(price)}</Badge></p>
+                        <p>Preço: <Badge>${staticUtils.formatReal(price)}</Badge></p>
                         <hr />
                         <Form inline>
                         <Row>
