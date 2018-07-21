@@ -6,8 +6,8 @@ import client from './services/Apollo';
 import { ApolloProvider } from "react-apollo";
 import gql from 'graphql-tag';
 import styled from 'styled-components';
-
-const session = sessionStorage.getItem('loginId');
+import staticUtils, { utilsManager }  from './utils/Utils';
+import Services from './services/Services';
 
 const Header = styled.div`
   height: 60px;
@@ -39,75 +39,41 @@ export default class Home extends React.Component  {
   constructor(props) {
     super(props);
     this.state = {
-        name: '',
-        id: '',
-        company: '',
-        isAuthenticated: false,
+        isAuthenticated: utilsManager.isAuthenticated(),
         isLoading: true,
-        discount: null
+        discount: null,
+        data: []
     };
-}
-  logout() {
-    sessionStorage.removeItem('loginId');
-    window.location.href = '/';
   }
   componentWillMount() {
     this.loginSession();
   }
   async checkDiscount(company) {
-    let data = [];
-    await client.query({
-        query: gql`
-        {
-          allDiscounts{
-            id
-            discount
-            company
-            quantity
-            product
-          }
-        }
-        `
-        })
-    .then(result => data = result);
-    var countries = data.data.allDiscounts.filter(function (task, index, array) {
-      if(task.company.toUpperCase() == company.toUpperCase()){
-        return task; 
+    let data = await Services.checkDataDiscount();
+    var countries = data.filter(function (discount, index, array) {
+      if(discount.company.toUpperCase() == company.toUpperCase()){
+        return discount; 
       } 
     });
     this.setState({
       discount: countries
     })
-}
+  }
   async getData() {
-    let data = [];
-    await client.query({
-        query: gql`
-        {
-            Profile(id: "${session}"){
-              id,
-              name,
-              company
-            }
-          }
-        `
-        })
-    .then(result => data = result.data);
-    if(data.Profile){
-      this.checkDiscount(data.Profile.company);
+    let data = await Services.getDataLogin(this.state.isAuthenticated);
+    if(data){
+      this.checkDiscount(data.company);
       this.setState({
         isAuthenticated: true,
-        name: data.Profile.name,
-        id: data.Profile.id,
-        company: data.Profile.company,
+        data: data,
         isLoading: false
       }) 
     } else {
-      this.logout()
+      staticUtils.logout()
     }
 }
   loginSession() {
-    if(session) {
+    if(this.state.isAuthenticated) {
       this.getData();
     } else {
       this.setState({
@@ -123,8 +89,8 @@ export default class Home extends React.Component  {
         <div>
           {this.state.isAuthenticated ? 
             <Header>
-              <TitleName>{this.state.company}</TitleName>
-              <LinkExit onClick={(e) => this.logout(e)}>Sair</LinkExit>
+              <TitleName>{this.state.data.company}</TitleName>
+              <LinkExit onClick={() => staticUtils.logout()}>Sair</LinkExit>
             </Header> : ''}
           <Grid>
             <Row>
@@ -133,7 +99,7 @@ export default class Home extends React.Component  {
                 {this.state.isAuthenticated ? 
                   <div>
                     <Alert bsStyle="info">
-                      <strong>Bem vindo {this.state.name}</strong>!<br/> Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende.
+                      <strong>Bem vindo {this.state.data.name}</strong>!<br/> Veja a lista de produtos abaixo e ecolha quais e a quantidade que melhor lhe atende.
                     </Alert>
                     <ApolloProvider client={client}>
                       <Product discount={this.state.discount} />
