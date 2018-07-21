@@ -57,11 +57,11 @@ export default class Product extends React.Component {
             });
         }
     }
-    handleProduct(id, name, price){
+    handleProduct(id, name, price, productId){
         const element = document.querySelector(`#${id}`).value;
         if(element > 0){
             let qtd = this.state.qtd + parseInt(element.substring(element.length - 1));
-            utilsManager.registerDataCart(name, price, element)
+            Services.registerDataCart(name, price, element, productId)
             this.setState({
                 isCheckoutVisible: true,
                 qtd: qtd
@@ -111,7 +111,7 @@ export default class Product extends React.Component {
                                     <FormControl type="number" id={id} placeholder="Ex: 1" />
                                 </Col>
                                 <Col xs={6} md={6}>
-                                    <Button bsStyle="success" onClick={() => this.handleProduct(id, name, price)}>COMPRAR</Button>
+                                    <Button bsStyle="success" onClick={() => this.handleProduct(id, name, price, productId)}>COMPRAR</Button>
                                 </Col>
                             </FormGroup>
                         </Row>

@@ -2,7 +2,6 @@ import client from './Apollo';
 import gql from 'graphql-tag';
 import { utilsManager }  from '../utils/Utils';
 
-
 export default class Services {
     static async getDataLogin() {
         if(utilsManager.isAuthenticated()){
@@ -75,7 +74,7 @@ export default class Services {
         .then(result => data = result);
         return data.data.allDiscounts;
     }
-    static async registerDataCart(name, price, qtd){
+    static async registerDataCart(name, price, qtd, productId){
         let total = qtd * price;
         await client.mutate({
             mutation: gql`
@@ -83,6 +82,7 @@ export default class Services {
                     createCart (
                         price: ${price}
                         product: "${name}"
+                        productId: "${productId}"
                         quantity: ${qtd}
                         profileId: "${utilsManager.isAuthenticated()}"
                         total: ${total}
@@ -90,111 +90,88 @@ export default class Services {
                     id
                     quantity
                     product
+                    productId
                 }
             }`
         });
     }
+    static async getLogin(email) {
+        let data = [];
+        await client.query({
+            query: gql`
+            {
+                Profile(email: "${email}"){
+                  id,
+                  name,
+                  email,
+                  password
+                }
+              }
+            `
+            })
+        .then(result => data = result);
+        return data
+   }
+   static async sendRegistration(){
+        await client.mutate({
+            mutation: gql`
+              mutation {
+                result: createProfile(
+                    email: "${this.state.email}"
+                    name: "${this.state.name}"
+                    password: "${this.state.password}"
+                    company: "${this.state.company}"
+                ) {
+                    id,
+                    name,
+                    company
+                }
+              }
+            `
+          });
+   }
+   static async getDataCart() {
+        if(utilsManager.isAuthenticated()){
+            let data = [];
+            await client.query({
+                query: gql`{
+                    Profile(id: "${utilsManager.isAuthenticated()}"){
+                    id,
+                    carts{
+                        id
+                        quantity
+                        price
+                        product
+                        total
+                        productId
+                    }
+                    }
+                }
+                `
+                })
+            .then(result => data = result.data); 
+            return data;
+        }
+    }
+    static async removeDataItemCart(id){
+        let data = await client.mutate({
+            mutation: gql`
+              mutation {
+                removeFromProfileOnCart(
+                  cartsCartId: "${id}", 
+                  profileProfileId: "${utilsManager.isAuthenticated()}"){
+                    profileProfile {
+                      id
+                      carts {
+                      quantity
+                      price
+                      product
+                      total
+                    }
+                  }
+                }
+              }`
+          });
+        return data;
+    }
 }
-
-
-// class Services {
-//     static _instance;
-
-
-//     async getDataLogin() {
-//         if(utilsManager.isAuthenticated()){
-//             let data = [];
-//             await client.query({
-//                 query: gql`
-//                 {
-//                     Profile(id: "${utilsManager.isAuthenticated()}"){
-//                     id,
-//                     name,
-//                     company
-//                     }
-//                 }
-//                 `
-//                 })
-//             .then(result => data = result.data);
-//             return data.Profile;
-//         }
-//     }
-//     async getDataProduct() {
-//         let data = [];
-//         await client.query({
-//             query: gql`
-//                 {
-//                     allProducts {
-//                         id
-//                         name
-//                         price
-//                         productId
-//                     }
-//                 }
-//             `
-//             })
-//         .then(result => data = result.data);
-//         return data;
-//     }
-//     async getDataQuantityCart() {
-//         if(utilsManager.isAuthenticated()){
-//             let data = [];
-//             await client.query({
-//                 query: gql`{
-//                     Profile(id: "${utilsManager.isAuthenticated()}"){
-//                         id,
-//                         carts{
-//                         quantity
-//                         }
-//                     }
-//                     }
-//                 `
-//                 })
-//             .then(result => data = result.data);
-//             return data;
-//         }
-//     }
-//     async checkDataDiscount(){
-//         let data = [];
-//         await client.query({
-//             query: gql`
-//             {
-//             allDiscounts{
-//                 id
-//                 discount
-//                 company
-//                 quantity
-//                 product
-//             }
-//             }
-//             `
-//             })
-//         .then(result => data = result);
-//         return data.data.allDiscounts;
-//     }
-//     async registerDataCart(name, price, qtd){
-//             let total = qtd * price;
-//             await client.mutate({
-//                 mutation: gql`
-//                     mutation {
-//                         createCart (
-//                             price: ${price}
-//                             product: "${name}"
-//                             quantity: ${qtd}
-//                             profileId: "${utilsManager.isAuthenticated()}"
-//                             total: ${total}
-//                     ){
-//                         id
-//                         quantity
-//                         product
-//                     }
-//                 }`
-//             });
-//         }
-
-//     static get Instance() {
-//         return this._instance || (this._instance = new this());
-//     }   
-// }
-
-// export const services = Services.Instance;

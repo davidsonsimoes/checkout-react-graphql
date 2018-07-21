@@ -1,8 +1,8 @@
 import React from 'react';
 import { Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Panel } from 'react-bootstrap';
 import swal from 'sweetalert';
-import gql from 'graphql-tag';
-import client from '../services/Apollo';
+import Services from '../services/Services';
+import staticUtils  from '../utils/Utils';
 
 export default class register extends React.Component  {
     constructor(props, context) {
@@ -21,22 +21,7 @@ export default class register extends React.Component  {
     }
     async registration() {
       try {
-        let response = await client.mutate({
-            mutation: gql`
-              mutation {
-                result: createProfile(
-                    email: "${this.state.email}"
-                    name: "${this.state.name}"
-                    password: "${this.state.password}"
-                    company: "${this.state.company}"
-                ) {
-                    id,
-                    name,
-                    company
-                }
-              }
-            `
-          });
+        let response = await Services.sendRegistration();
           const addedCompany = response.data;
           this.setState({ isLoading: false });
           if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
@@ -62,12 +47,8 @@ export default class register extends React.Component  {
     checkValidationForm() {
         if(this.state.company !== '',
         this.state.name !== '',
-        this.validateEmail(this.state.email),
+        staticUtils.validateEmail(this.state.email),
         (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
-    }
-    validateEmail(email){
-        let re = /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/;
-        return re.test(email);
     }
     submitRegister() {
         this.setState({ isLoading: true });
@@ -76,7 +57,7 @@ export default class register extends React.Component  {
     getValidationState(e) {
         e.preventDefault();
         this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '';
-        this.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
+        staticUtils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
         this.state.rePassword === '' ? swal("Ops!", "Repita sua senha.", "error") : '';
         this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
         this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
@@ -108,7 +89,6 @@ export default class register extends React.Component  {
     }
   render() {
     const { isLoading } = this.state;
-
     return (
         <Panel bsStyle="info">
             <Panel.Heading>

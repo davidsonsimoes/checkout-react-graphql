@@ -1,9 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Link } from 'react-router-dom';
 import { Glyphicon, Fade } from 'react-bootstrap';
-
-const session = sessionStorage.getItem('loginId');
+import { utilsManager }  from '../utils/Utils';
 
 const ContentIconCheckout = styled.div`
     background-color: #eee;
@@ -32,18 +30,27 @@ const NumberQtd = styled.div`
     font-size: 13px;
     color: #fff;
 `;
-
+const LinkTo = styled.a`
+    cursor: pointer
+`;
 export default class iconCheckout extends React.Component  {
+    linkTo(){
+        if(utilsManager.isAuthenticated()){
+            window.location.href = '/checkout';
+        } else {
+            window.location.href = '/login';
+        }
+    }
   render() {
     return (
         <div>
             <Fade in={this.props.isActive}>
-                <Link to={session ? "/checkout" : "/login"}>
+                <LinkTo onClick={() => this.linkTo()}>
                     <ContentIconCheckout>
                         <NumberQtd>{this.props.qtd}</NumberQtd>
                         <Glyphicon glyph="glyphicon glyphicon-shopping-cart" />
                     </ContentIconCheckout>
-                </Link>
+                </LinkTo>
             </Fade>
         </div>
     );

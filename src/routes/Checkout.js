@@ -1,10 +1,8 @@
 import React from 'react';
 import { Grid, Row, Col, Form, FormGroup, PageHeader, Breadcrumb, Alert, Table, Button, Glyphicon } from 'react-bootstrap';
 import styled from 'styled-components';
-import gql from 'graphql-tag';
-import client from '../services/Apollo'
-
-const session = sessionStorage.getItem('loginId');
+import staticUtils, { utilsManager }  from '../utils/Utils';
+import Services from '../services/Services';
 
 const Footercheckout = styled.div`
   text-align: right
@@ -23,40 +21,45 @@ export default class Checkout extends React.Component  {
             email: '',
             password: '',
             data: [],
-            totalPrice: 0
+            totalPrice: 0,
+            discount: []
         };
     }
-    formatReal = (int) => {
-      let tmp = int+'';
-      tmp = tmp.replace(/([0-9]{2})$/g, ".$1");
-      if( tmp.length > 6 )
-              tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1.$2");
-      return tmp;
-    }
-    async getCartItems() {
-        let data = [];
-        await client.query({
-            query: gql`{
-                Profile(id: "${session}"){
-                  id,
-                  carts{
-                    id
-                    quantity
-                    price
-                    product
-                    total
-                  }
-                }
-              }
-            `
-            })
-        .then(result => data = result.data); 
-        console.log(data);
-        this.setState({
-          data: data.Profile.carts
-        })
-        this.totalPrice();
+  async getCartItems() {
+      let data = await Services.getDataCart();
+      this.setState({
+        data: data.Profile.carts
+      })
+      this.totalPrice();
   }
+  calcDiscount(id, quantity, price, product, total, productId){
+    for (let i = 0; i < this.state.discount.length; i++) { 
+        if(this.state.discount[i].product === productId) {
+          console.log(productId, price, quantity)
+          return staticUtils.formatReal(29899);
+        } else {
+          return staticUtils.formatReal(total)
+        }
+    }
+  }
+  async checkDiscount(company) {
+    let data = await Services.checkDataDiscount();
+    var countries = data.filter(function (discount, index, array) {
+      if(discount.company.toUpperCase() == company.toUpperCase()){
+        return discount; 
+      } 
+    });
+    this.setState({discount: countries})
+    // this.calcDiscount(countries);
+  }
+  async getDataProfile() {
+    let data = await Services.getDataLogin();
+    if(data){
+      this.checkDiscount(data.company);
+    } else {
+      staticUtils.logout()
+    }
+}
   totalPrice(){
     var sum = 0;
     for (var i = 0; i < this.state.data.length; i++) {
@@ -67,34 +70,18 @@ export default class Checkout extends React.Component  {
     })
   }
   async removeItemCart(id){
-    let response = await client.mutate({
-        mutation: gql`
-          mutation {
-            removeFromProfileOnCart(
-              cartsCartId: "${id}", 
-              profileProfileId: "${session}"){
-                profileProfile {
-                  id
-                  carts {
-                  quantity
-                  price
-                  product
-                  total
-                }
-              }
-            }
-          }`
-      });
+    let response = await Services.removeDataItemCart(id);
       this.setState({
         data: response.data.removeFromProfileOnCart.profileProfile.carts
       })
       this.totalPrice()
       window.location.href = '/checkout'
+    
   }
   componentDidMount(){
-    if(session){
+    if(utilsManager.isAuthenticated()){
       this.getCartItems();
-      // window.location.href = '/checkout'
+      this.getDataProfile();
     } else {
       window.location.href = "/login"
     }
@@ -131,21 +118,21 @@ export default class Checkout extends React.Component  {
                 </tr>
               </thead>
               <tbody>
-                {this.state.data.map(({ id, quantity, price, product, total }) => (
+                {this.state.data.map(({ id, quantity, price, product, total, productId}) => (
                   <tr key={id}>
                     <td>
                       <LinkRemove onClick={() => this.removeItemCart(id)}><Glyphicon glyph="glyphicon glyphicon-trash" /></LinkRemove>
                     </td>
                     <td>{product}</td>
                     <td>{quantity}</td>
-                    <td>${this.formatReal(price)}</td>
-                    <td>${this.formatReal(total)}</td>
-                    <td>${this.formatReal(total)}</td>
+                    <td>${staticUtils.formatReal(price)}</td>
+                    <td>${staticUtils.formatReal(total)}</td>
+                    <td>${this.calcDiscount(id, quantity, price, product, total, productId)}</td>
                   </tr>
                 ))}
                 <tr>
                   <td colSpan="4"></td>
-                  <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? this.formatReal(this.state.totalPrice) : ''}</h4></td>
+                  <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? staticUtils.formatReal(this.state.totalPrice) : ''}</h4></td>
                   <td><h2>Total: 4.343</h2></td>
                 </tr>
               </tbody>
