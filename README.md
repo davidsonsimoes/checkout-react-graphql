@@ -15,8 +15,8 @@ Teste técnico GDP, esse teste consiste na criação de uma solução de venda d
 
 Os comandos necessários para rodar o projeto em ambiente local são:
 
-# `git clone git@github.com:davidsonsimoes/gdp.git &`
+ `git clone git@github.com:davidsonsimoes/gdp.git &`
 
-# `cd gdp/ && npm install`
+ `cd gdp/ && npm install`
 
-# `npm start`
+ `npm start`
