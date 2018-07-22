@@ -61,7 +61,9 @@ export default class Product extends React.Component {
         const element = document.querySelector(`#${id}`).value;
         if(element > 0){
             let qtd = this.state.qtd + parseInt(element.substring(element.length - 1));
-            Services.registerDataCart(name, price, element, productId)
+            
+            utilsManager.isAuthenticated() ? Services.registerDataCart(name, price, element, productId) : '';
+            
             this.setState({
                 isCheckoutVisible: true,
                 qtd: qtd
