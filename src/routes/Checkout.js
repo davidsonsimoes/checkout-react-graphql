@@ -32,11 +32,24 @@ export default class Checkout extends React.Component  {
       })
       this.totalPrice();
   }
+
   calcDiscount(id, quantity, price, product, total, productId){
     for (let i = 0; i < this.state.discount.length; i++) { 
         if(this.state.discount[i].product === productId) {
-          console.log(productId, price, quantity)
-          return staticUtils.formatReal(29899);
+
+          let quantidade = quantity;
+          let preco = price;
+          let desconto = this.state.discount[i].discount;
+          let dtDesconto = this.state.discount[i].quantity;
+          
+          console.log(quantidade, preco, desconto, dtDesconto);
+          if(quantidade >= dtDesconto) {
+            let numbers = Math.floor(quantidade/dtDesconto);
+            return staticUtils.formatReal(preco * quantidade - desconto*numbers);
+          } else {
+            return staticUtils.formatReal(total)
+          }
+
         } else {
           return staticUtils.formatReal(total)
         }

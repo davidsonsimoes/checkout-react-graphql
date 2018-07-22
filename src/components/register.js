@@ -21,23 +21,24 @@ export default class register extends React.Component  {
     }
     async registration() {
       try {
-        let response = await Services.sendRegistration();
+        console.log('lalala');
+        let response = await Services.sendRegistration(this.state.email, this.state.name, this.state.password, this.state.company);
           const addedCompany = response.data;
           this.setState({ isLoading: false });
-          if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
+            if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
                 addedCompany.result.company.toUpperCase() === 'APPLE' ||
                 addedCompany.result.company.toUpperCase() === 'NIKE' ||
                 addedCompany.result.company.toUpperCase() === 'FORD'){
-            swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
+                swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
                 sessionStorage.setItem('loginId', addedCompany.result.id);
                 window.location.href = '/';
             });
-        } else {
-            swal("Cadastro Realizado!", "Confira nossa lista de anúncios.", "success", { button: "Conferir" }).then(()=>{
-                sessionStorage.setItem('loginId', addedCompany.result.id);
-                window.location.href = '/';
-            });
-          }
+            } else {
+                swal("Cadastro Realizado!", "Confira nossa lista de anúncios.", "success", { button: "Conferir" }).then(()=>{
+                    sessionStorage.setItem('loginId', addedCompany.result.id);
+                    window.location.href = '/';
+                });
+            }
         } catch (error) {
             let errorStr = error.toString();
             this.setState({ isLoading: false });
@@ -51,6 +52,7 @@ export default class register extends React.Component  {
         (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
     }
     submitRegister() {
+        console.log('eeuu');
         this.setState({ isLoading: true });
         this.registration();
     }

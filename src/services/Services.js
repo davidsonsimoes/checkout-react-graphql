@@ -112,15 +112,15 @@ export default class Services {
         .then(result => data = result);
         return data
    }
-   static async sendRegistration(){
-        await client.mutate({
+   static async sendRegistration(email, name, password, company){
+        let data = await client.mutate({
             mutation: gql`
               mutation {
                 result: createProfile(
-                    email: "${this.state.email}"
-                    name: "${this.state.name}"
-                    password: "${this.state.password}"
-                    company: "${this.state.company}"
+                    email: "${email}"
+                    name: "${name}"
+                    password: "${password}"
+                    company: "${company}"
                 ) {
                     id,
                     name,
@@ -129,6 +129,7 @@ export default class Services {
               }
             `
           });
+        return data;
    }
    static async getDataCart() {
         if(utilsManager.isAuthenticated()){
