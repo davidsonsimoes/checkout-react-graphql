@@ -60,9 +60,9 @@ export default class Product extends React.Component {
     handleProduct(id, name, price, productId){
         const element = document.querySelector(`#${id}`).value;
         if(element > 0){
-            let qtd = this.state.qtd + parseInt(element.substring(element.length - 1));
+            let qtd = this.state.qtd + parseInt(element.substring(element.length - 1), 10);
             
-            SessionManager.getSessionID() ? Services.registerDataCart(name, price, element, productId) : '';
+            if(SessionManager.getSessionID()){Services.registerDataCart(name, price, element, productId)};
 
             this.setState({
                 isCheckoutVisible: true,
@@ -88,7 +88,7 @@ export default class Product extends React.Component {
   }
   componentWillMount() {
     this.getProduct();
-    this.state.isAuthenticated ? this.getQuantityCart() : '';
+    if(this.state.isAuthenticated){this.getQuantityCart()};
   }
   render() {
     if(this.state.isAuthenticated && !this.props.discount) {

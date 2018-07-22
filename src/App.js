@@ -50,9 +50,11 @@ export default class Home extends React.Component  {
   async checkDiscount(company) {
     let data = await Services.checkDataDiscount();
     var countries = data.filter(function (discount, index, array) {
-      if(discount.company.toUpperCase() == company.toUpperCase()){
+      if(discount.company.toUpperCase() === company.toUpperCase()){
         return discount; 
-      } 
+      } else {
+        return null
+      }
     });
     this.setState({
       discount: countries

@@ -32,9 +32,9 @@ export default class Login extends React.Component  {
   }
   
   checkValidationForm() {
-    if(this.state.email !== '',
-    this.state.password !== '',
-    Utils.validateEmail(this.state.email)){ return true }
+    if(this.state.email.length > 0 &&
+        this.state.password.length > 0 &&
+        Utils.validateEmail(this.state.email)){ return true }
 }
 submitRegister() {
     this.setState({ isLoading: true });
@@ -42,10 +42,10 @@ submitRegister() {
 }
 getValidationState(e) {
     e.preventDefault();
-    Utils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
-    this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
-    this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
-    this.checkValidationForm() ? this.submitRegister() : '';
+    if(Utils.validateEmail(this.state.email)){swal("Ops!", "Preencha um email válido.", "error")}
+    if(this.state.password === ''){swal("Ops!", "Preencha sua senha.", "error")}
+    if(this.state.email === ''){swal("Ops!", "Preencha seu e-mail.", "error")}
+    if(this.checkValidationForm()){this.submitRegister()}
 }
   handleChange(e) {
     switch (e.target.id) {

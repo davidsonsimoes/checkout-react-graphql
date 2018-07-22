@@ -46,9 +46,9 @@ export default class register extends React.Component  {
         } 
     }
     checkValidationForm() {
-        if(this.state.company !== '',
-        this.state.name !== '',
-        Utils.validateEmail(this.state.email),
+        if(this.state.company !== '' &&
+        this.state.name !== '' &&
+        Utils.validateEmail(this.state.email)  &&
         (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
     }
     submitRegister() {
@@ -57,14 +57,14 @@ export default class register extends React.Component  {
     }
     getValidationState(e) {
         e.preventDefault();
-        this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '';
-        Utils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
-        this.state.rePassword === '' ? swal("Ops!", "Repita sua senha.", "error") : '';
-        this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
-        this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
-        this.state.company === '' ? swal("Ops!", "Preencha sua empresa.", "error") : '';
-        this.state.name === '' ? swal("Ops!", "Preencha seu nome.", "error") : '';
-        this.checkValidationForm() ? this.submitRegister() : '';
+        if(this.state.rePassword !== this.state.password){swal("Ops!", "As senhas não conferem.", "error")};
+        if(!Utils.validateEmail(this.state.email)){swal("Ops!", "Preencha um email válido.", "error")};
+        if(this.state.rePassword === ''){swal("Ops!", "Repita sua senha.", "error")};
+        if(this.state.password === ''){swal("Ops!", "Preencha sua senha.", "error")};
+        if(this.state.email === ''){swal("Ops!", "Preencha seu e-mail.", "error")};
+        if(this.state.company === ''){swal("Ops!", "Preencha sua empresa.", "error")};
+        if(this.state.name === ''){swal("Ops!", "Preencha seu nome.", "error")};
+        if(this.checkValidationForm()){this.submitRegister()};
     }
     
     handleChange(e) {

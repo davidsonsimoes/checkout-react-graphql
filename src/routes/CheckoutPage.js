@@ -42,10 +42,12 @@ export default class Checkout extends React.Component  {
 
   async checkDiscount(company) {
     let data = await Services.checkDataDiscount();
-    var countries = data.filter(function (discount, index, array) {
-      if(discount.company.toUpperCase() == company.toUpperCase()){
+    var countries = data.filter(function (discount) {
+      if(discount.company.toUpperCase() === company.toUpperCase()){
         return discount; 
-      } 
+      } else {
+        return null
+      }
     });
     this.setState({discount: countries})
   }
