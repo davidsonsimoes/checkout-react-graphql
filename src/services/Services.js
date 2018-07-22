@@ -3,6 +3,25 @@ import gql from 'graphql-tag';
 import { utilsManager }  from '../utils/Utils';
 
 export default class Services {
+    static async checkProfileDiscount(price, quantity, productId){
+
+        let discount = await this.checkDataDiscount();
+        let loginData = await this.getDataLogin();
+
+            for (let i = 0; i < discount.length; i++) {                 
+                if(discount[i].product === productId && discount[i].company === loginData.company.toUpperCase()) {
+                  
+                  let discountValue = discount[i].discount;
+                  let discountQuantity = discount[i].quantity;
+
+                  if(quantity >= discountQuantity) {
+                    let numbers = Math.floor(quantity/discountQuantity);
+                    return price * quantity - discountValue*numbers;
+                  } 
+        
+                } 
+            }
+    }
     static async getDataLogin() {
         if(utilsManager.isAuthenticated()){
             let data = [];
@@ -76,6 +95,7 @@ export default class Services {
     }
     static async registerDataCart(name, price, qtd, productId){
         let total = qtd * price;
+        let totalDiscount = await this.checkProfileDiscount(price, qtd, productId)
         await client.mutate({
             mutation: gql`
                 mutation {
@@ -86,6 +106,7 @@ export default class Services {
                         quantity: ${qtd}
                         profileId: "${utilsManager.isAuthenticated()}"
                         total: ${total}
+                        totalDiscount: ${totalDiscount ? totalDiscount : total}
                 ){
                     id
                     quantity
@@ -145,6 +166,7 @@ export default class Services {
                         product
                         total
                         productId
+                        totalDiscount
                     }
                     }
                 }

@@ -27,7 +27,6 @@ export default class Login extends React.Component  {
         } else {
             this.setState({ isLoading: false });
             sessionStorage.setItem('loginId', data.data.Profile.id);
-            console.log(data.data.Profile);
             window.location.href = '/';
         }
   }
@@ -46,7 +45,6 @@ getValidationState(e) {
     staticUtils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
     this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
     this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
-    console.log(this.checkValidationForm());
     this.checkValidationForm() ? this.submitRegister() : '';
 }
   handleChange(e) {

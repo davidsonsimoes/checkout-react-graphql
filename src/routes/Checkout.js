@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Row, Col, Form, FormGroup, PageHeader, Breadcrumb, Alert, Table, Button, Glyphicon } from 'react-bootstrap';
+import { Grid, Row, Col, Tooltip, OverlayTrigger, PageHeader, Breadcrumb, Table, Button, Glyphicon } from 'react-bootstrap';
 import styled from 'styled-components';
 import staticUtils, { utilsManager }  from '../utils/Utils';
 import Services from '../services/Services';
@@ -13,6 +13,12 @@ const LinkRemove = styled.a`
   margin: 0 auto;
 `;
 
+const tooltip = (
+  <Tooltip id="tooltip">
+    <strong>Chega né?</strong> isso é só um teste =P
+  </Tooltip>
+);
+
 export default class Checkout extends React.Component  {
     constructor(props, context) {
         super(props, context);
@@ -22,7 +28,8 @@ export default class Checkout extends React.Component  {
             password: '',
             data: [],
             totalPrice: 0,
-            discount: []
+            discount: [],
+            totalDiscount: 0
         };
     }
   async getCartItems() {
@@ -33,28 +40,6 @@ export default class Checkout extends React.Component  {
       this.totalPrice();
   }
 
-  calcDiscount(id, quantity, price, product, total, productId){
-    for (let i = 0; i < this.state.discount.length; i++) { 
-        if(this.state.discount[i].product === productId) {
-
-          let quantidade = quantity;
-          let preco = price;
-          let desconto = this.state.discount[i].discount;
-          let dtDesconto = this.state.discount[i].quantity;
-          
-          console.log(quantidade, preco, desconto, dtDesconto);
-          if(quantidade >= dtDesconto) {
-            let numbers = Math.floor(quantidade/dtDesconto);
-            return staticUtils.formatReal(preco * quantidade - desconto*numbers);
-          } else {
-            return staticUtils.formatReal(total)
-          }
-
-        } else {
-          return staticUtils.formatReal(total)
-        }
-    }
-  }
   async checkDiscount(company) {
     let data = await Services.checkDataDiscount();
     var countries = data.filter(function (discount, index, array) {
@@ -63,6 +48,9 @@ export default class Checkout extends React.Component  {
       } 
     });
     this.setState({discount: countries})
+    // this.state.data.map(({ id, quantity, price, product, total, productId}) => (
+    //   this.calcDiscount(id, quantity, price, product, total, productId)
+    // ))
     // this.calcDiscount(countries);
   }
   async getDataProfile() {
@@ -74,12 +62,15 @@ export default class Checkout extends React.Component  {
     }
 }
   totalPrice(){
-    var sum = 0;
+    let total = 0;
+    let totalDiscount = 0;
     for (var i = 0; i < this.state.data.length; i++) {
-        sum += this.state.data[i].total
+        total += this.state.data[i].total
+        totalDiscount += this.state.data[i].totalDiscount
     }
     this.setState({
-      totalPrice: sum
+      totalPrice: total,
+      totalDiscount: totalDiscount
     })
   }
   async removeItemCart(id){
@@ -127,11 +118,11 @@ export default class Checkout extends React.Component  {
                   <th>Quantidade</th>
                   <th width="170">Preço Unidade</th>
                   <th width="200">Total</th>
-                  <th width="200">Total com desconto</th>
+                  <th width="220">Total com desconto</th>
                 </tr>
               </thead>
               <tbody>
-                {this.state.data.map(({ id, quantity, price, product, total, productId}) => (
+                {this.state.data.map(({ id, quantity, price, product, total, totalDiscount}) => (
                   <tr key={id}>
                     <td>
                       <LinkRemove onClick={() => this.removeItemCart(id)}><Glyphicon glyph="glyphicon glyphicon-trash" /></LinkRemove>
@@ -140,20 +131,23 @@ export default class Checkout extends React.Component  {
                     <td>{quantity}</td>
                     <td>${staticUtils.formatReal(price)}</td>
                     <td>${staticUtils.formatReal(total)}</td>
-                    <td>${this.calcDiscount(id, quantity, price, product, total, productId)}</td>
+                    <td>${staticUtils.formatReal(totalDiscount)}</td>
                   </tr>
                 ))}
                 <tr>
                   <td colSpan="4"></td>
                   <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? staticUtils.formatReal(this.state.totalPrice) : ''}</h4></td>
-                  <td><h2>Total: 4.343</h2></td>
+                  <td><h2>Total: ${this.state.totalDiscount > 0 ? staticUtils.formatReal(this.state.totalDiscount) : ''}</h2></td>
                 </tr>
               </tbody>
             </Table>
             <Footercheckout>
-              <Button bsStyle="success" bsSize="large">
-                FINALIZAR
-              </Button>
+              <OverlayTrigger placement="top" overlay={tooltip}>
+                <Button bsStyle="success" bsSize="large">
+                  FINALIZAR
+                </Button>
+              </OverlayTrigger>
+              
             </Footercheckout>
             </Col>
             <Col md={1}></Col>

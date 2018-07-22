@@ -21,7 +21,6 @@ export default class register extends React.Component  {
     }
     async registration() {
       try {
-        console.log('lalala');
         let response = await Services.sendRegistration(this.state.email, this.state.name, this.state.password, this.state.company);
           const addedCompany = response.data;
           this.setState({ isLoading: false });
@@ -52,7 +51,6 @@ export default class register extends React.Component  {
         (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
     }
     submitRegister() {
-        console.log('eeuu');
         this.setState({ isLoading: true });
         this.registration();
     }
