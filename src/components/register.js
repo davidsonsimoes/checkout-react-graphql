@@ -19,16 +19,21 @@ export default class register extends React.Component  {
             isLoading: false
         };
     }
+    async checkDiscountCompany(company){
+        let companies = await Services.checkDataDiscount();
+        for (let i = 0; i < companies.length; i++) { 
+            if(companies[i].company === company.toUpperCase()) {
+                return true
+            }
+         }
+        
+    }
     async registration() {
       try {
         let response = await Services.sendRegistration(this.state.email, this.state.name, this.state.password, this.state.company);
           const addedCompany = response.data;
           this.setState({ isLoading: false });
-          
-            if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
-                addedCompany.result.company.toUpperCase() === 'APPLE' ||
-                addedCompany.result.company.toUpperCase() === 'NIKE' ||
-                addedCompany.result.company.toUpperCase() === 'FORD'){
+            if(this.checkDiscountCompany(addedCompany.result.company)){
                 swal("Cadastro Realizado!", `Bom saber que você é da ${addedCompany.result.company}, separamos um desconto especial para sua empresa.`, "success", { button: "Conferir" }).then(()=>{
                 sessionStorage.setItem('loginId', addedCompany.result.id);
                 window.location.href = '/';
