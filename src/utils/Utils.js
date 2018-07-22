@@ -1,13 +1,13 @@
-class Utils {
+class Session {
 
     static _instance;
 
     constructor() {
         this.session = sessionStorage.getItem('loginId');
-        this.isAuthenticated();
+        this.getSessionID();
     }
 
-    isAuthenticated() {
+    getSessionID() {
         if(this.session){
             return this.session
         }
@@ -16,9 +16,9 @@ class Utils {
         return this._instance || (this._instance = new this());
     }
 }
-export const utilsManager = Utils.Instance;
+export const SessionManager = Session.Instance;
 
-export default class staticUtils {
+export default class Utils {
     static logout() {
         sessionStorage.removeItem('loginId');
         window.location.href = '/'
@@ -40,5 +40,8 @@ export default class staticUtils {
         if( tmp.length > 6 )
                 tmp = tmp.replace(/([0-9]{3}),([0-9]{2}$)/g, ".$1.$2");
         return tmp;
+    }
+    static checkDiscountCompany(company){
+        console.log(company);
     }
 }

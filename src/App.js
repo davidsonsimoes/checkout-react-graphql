@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import Product from './components/product';
+import Product from './components/Product';
 import { Grid, Row, Col, Jumbotron, Alert } from 'react-bootstrap';
 import client from './services/Apollo';
 import { ApolloProvider } from "react-apollo";
 import styled from 'styled-components';
-import staticUtils, { utilsManager }  from './utils/Utils';
+import Utils, { SessionManager }  from './utils/Utils';
 import Services from './services/Services';
 
 const Header = styled.div`
@@ -38,7 +38,7 @@ export default class Home extends React.Component  {
   constructor(props) {
     super(props);
     this.state = {
-        isAuthenticated: utilsManager.isAuthenticated(),
+        isAuthenticated: SessionManager.getSessionID(),
         isLoading: true,
         discount: null,
         data: []
@@ -68,7 +68,7 @@ export default class Home extends React.Component  {
         isLoading: false
       }) 
     } else {
-      staticUtils.logout()
+      Utils.logout()
     }
 }
   loginSession() {
@@ -89,7 +89,7 @@ export default class Home extends React.Component  {
           {this.state.isAuthenticated ? 
             <Header>
               <TitleName>{this.state.data.company}</TitleName>
-              <LinkExit onClick={() => staticUtils.logout()}>Sair</LinkExit>
+              <LinkExit onClick={() => Utils.logout()}>Sair</LinkExit>
             </Header> : ''}
           <Grid>
             <Row>

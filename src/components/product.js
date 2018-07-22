@@ -1,9 +1,9 @@
 import React from 'react';
 import { Row, Col, Button, Thumbnail, Badge, FormGroup, ControlLabel, Form, Label } from 'react-bootstrap';
-import IconCheckout from './iconCheckout';
+import IconCheckout from './IconCheckout';
 import swal from 'sweetalert';
 import styled from 'styled-components';
-import staticUtils, { utilsManager }  from '../utils/Utils';
+import Utils, { SessionManager }  from '../utils/Utils';
 import Services from '../services/Services';
 
 const Image = styled.img`
@@ -41,7 +41,7 @@ export default class Product extends React.Component {
             data: [],
             isCheckoutVisible: false,
             qtd: 0,
-            isAuthenticated: utilsManager.isAuthenticated()
+            isAuthenticated: SessionManager.getSessionID()
         };
     }
     async getQuantityCart() {
@@ -62,8 +62,8 @@ export default class Product extends React.Component {
         if(element > 0){
             let qtd = this.state.qtd + parseInt(element.substring(element.length - 1));
             
-            utilsManager.isAuthenticated() ? Services.registerDataCart(name, price, element, productId) : '';
-            
+            SessionManager.getSessionID() ? Services.registerDataCart(name, price, element, productId) : '';
+
             this.setState({
                 isCheckoutVisible: true,
                 qtd: qtd
@@ -103,7 +103,7 @@ export default class Product extends React.Component {
                         <ContentThumb>
                         <h3>{name}</h3>
                         {this.checkDiscount(productId) ? <BoxDiscount><Label bsStyle="danger">PROMOÇÃO</Label> especial para sua empresa</BoxDiscount> : ''}
-                        <p>Preço: <Badge>${staticUtils.formatReal(price)}</Badge></p>
+                        <p>Preço: <Badge>${Utils.formatReal(price)}</Badge></p>
                         <hr />
                         <Form inline>
                         <Row>

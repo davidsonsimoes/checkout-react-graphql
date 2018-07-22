@@ -1,6 +1,6 @@
 import client from './Apollo';
 import gql from 'graphql-tag';
-import { utilsManager }  from '../utils/Utils';
+import { SessionManager }  from '../utils/Utils';
 
 export default class Services {
     static async checkProfileDiscount(price, quantity, productId){
@@ -23,12 +23,12 @@ export default class Services {
             }
     }
     static async getDataLogin() {
-        if(utilsManager.isAuthenticated()){
+        if(SessionManager.getSessionID()){
             let data = [];
             await client.query({
                 query: gql`
                 {
-                    Profile(id: "${utilsManager.isAuthenticated()}"){
+                    Profile(id: "${SessionManager.getSessionID()}"){
                     id,
                     name,
                     company
@@ -58,11 +58,11 @@ export default class Services {
         return data;
     }
     static async getDataQuantityCart() {
-        if(utilsManager.isAuthenticated()){
+        if(SessionManager.getSessionID()){
             let data = [];
             await client.query({
                 query: gql`{
-                    Profile(id: "${utilsManager.isAuthenticated()}"){
+                    Profile(id: "${SessionManager.getSessionID()}"){
                         id,
                         carts{
                         quantity
@@ -104,7 +104,7 @@ export default class Services {
                         product: "${name}"
                         productId: "${productId}"
                         quantity: ${qtd}
-                        profileId: "${utilsManager.isAuthenticated()}"
+                        profileId: "${SessionManager.getSessionID()}"
                         total: ${total}
                         totalDiscount: ${totalDiscount ? totalDiscount : total}
                 ){
@@ -153,11 +153,11 @@ export default class Services {
         return data;
    }
    static async getDataCart() {
-        if(utilsManager.isAuthenticated()){
+        if(SessionManager.getSessionID()){
             let data = [];
             await client.query({
                 query: gql`{
-                    Profile(id: "${utilsManager.isAuthenticated()}"){
+                    Profile(id: "${SessionManager.getSessionID()}"){
                     id,
                     carts{
                         id
@@ -182,7 +182,7 @@ export default class Services {
               mutation {
                 removeFromProfileOnCart(
                   cartsCartId: "${id}", 
-                  profileProfileId: "${utilsManager.isAuthenticated()}"){
+                  profileProfileId: "${SessionManager.getSessionID()}"){
                     profileProfile {
                       id
                       carts {

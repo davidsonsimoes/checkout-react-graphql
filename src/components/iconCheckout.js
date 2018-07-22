@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Glyphicon, Fade } from 'react-bootstrap';
-import { utilsManager }  from '../utils/Utils';
+import { SessionManager }  from '../utils/Utils';
 
 const ContentIconCheckout = styled.div`
     background-color: #eee;
@@ -33,9 +33,9 @@ const NumberQtd = styled.div`
 const LinkTo = styled.a`
     cursor: pointer
 `;
-export default class iconCheckout extends React.Component  {
+export default class IconCheckout extends React.Component  {
     linkTo(){
-        if(utilsManager.isAuthenticated()){
+        if(SessionManager.getSessionID()){
             window.location.href = '/checkout';
         } else {
             window.location.href = '/login';

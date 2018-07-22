@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Panel } from 'react-bootstrap';
 import swal from 'sweetalert';
 import Services from '../services/Services';
-import staticUtils  from '../utils/Utils';
+import Utils  from '../utils/Utils';
 
 export default class Login extends React.Component  {
     constructor(props, context) {
@@ -34,7 +34,7 @@ export default class Login extends React.Component  {
   checkValidationForm() {
     if(this.state.email !== '',
     this.state.password !== '',
-    staticUtils.validateEmail(this.state.email)){ return true }
+    Utils.validateEmail(this.state.email)){ return true }
 }
 submitRegister() {
     this.setState({ isLoading: true });
@@ -42,7 +42,7 @@ submitRegister() {
 }
 getValidationState(e) {
     e.preventDefault();
-    staticUtils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
+    Utils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
     this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
     this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
     this.checkValidationForm() ? this.submitRegister() : '';

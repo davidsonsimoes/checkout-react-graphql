@@ -1,9 +1,9 @@
 import React from 'react';
 import { Grid, Row, Col, PageHeader, Alert, Breadcrumb } from 'react-bootstrap';
-import Login from   '../components/login';
-import Register from   '../components/register';
+import Login from   '../components/Login';
+import Register from   '../components/Register';
 
-export default class Example extends React.Component  {
+export default class LoginPage extends React.Component  {
   render() {
     return (
       <div className="App">

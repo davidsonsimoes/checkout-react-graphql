@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, Row, Col, Tooltip, OverlayTrigger, PageHeader, Breadcrumb, Table, Button, Glyphicon } from 'react-bootstrap';
 import styled from 'styled-components';
-import staticUtils, { utilsManager }  from '../utils/Utils';
+import Utils, { SessionManager }  from '../utils/Utils';
 import Services from '../services/Services';
 
 const Footercheckout = styled.div`
@@ -48,17 +48,13 @@ export default class Checkout extends React.Component  {
       } 
     });
     this.setState({discount: countries})
-    // this.state.data.map(({ id, quantity, price, product, total, productId}) => (
-    //   this.calcDiscount(id, quantity, price, product, total, productId)
-    // ))
-    // this.calcDiscount(countries);
   }
   async getDataProfile() {
     let data = await Services.getDataLogin();
     if(data){
       this.checkDiscount(data.company);
     } else {
-      staticUtils.logout()
+      Utils.logout()
     }
 }
   totalPrice(){
@@ -83,7 +79,7 @@ export default class Checkout extends React.Component  {
     
   }
   componentDidMount(){
-    if(utilsManager.isAuthenticated()){
+    if(SessionManager.getSessionID()){
       this.getCartItems();
       this.getDataProfile();
     } else {
@@ -129,15 +125,15 @@ export default class Checkout extends React.Component  {
                     </td>
                     <td>{product}</td>
                     <td>{quantity}</td>
-                    <td>${staticUtils.formatReal(price)}</td>
-                    <td>${staticUtils.formatReal(total)}</td>
-                    <td>${staticUtils.formatReal(totalDiscount)}</td>
+                    <td>${Utils.formatReal(price)}</td>
+                    <td>${Utils.formatReal(total)}</td>
+                    <td>${Utils.formatReal(totalDiscount)}</td>
                   </tr>
                 ))}
                 <tr>
                   <td colSpan="4"></td>
-                  <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? staticUtils.formatReal(this.state.totalPrice) : ''}</h4></td>
-                  <td><h2>Total: ${this.state.totalDiscount > 0 ? staticUtils.formatReal(this.state.totalDiscount) : ''}</h2></td>
+                  <td><br/><h4>Subtotal: ${this.state.totalPrice > 0 ? Utils.formatReal(this.state.totalPrice) : ''}</h4></td>
+                  <td><h2>Total: ${this.state.totalDiscount > 0 ? Utils.formatReal(this.state.totalDiscount) : ''}</h2></td>
                 </tr>
               </tbody>
             </Table>

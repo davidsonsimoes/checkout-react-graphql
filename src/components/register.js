@@ -2,7 +2,7 @@ import React from 'react';
 import { Row, Col, Form, FormGroup, FormControl, ControlLabel, Button, Panel } from 'react-bootstrap';
 import swal from 'sweetalert';
 import Services from '../services/Services';
-import staticUtils  from '../utils/Utils';
+import Utils  from '../utils/Utils';
 
 export default class register extends React.Component  {
     constructor(props, context) {
@@ -24,6 +24,7 @@ export default class register extends React.Component  {
         let response = await Services.sendRegistration(this.state.email, this.state.name, this.state.password, this.state.company);
           const addedCompany = response.data;
           this.setState({ isLoading: false });
+          
             if(addedCompany.result.company.toUpperCase() === 'UNILEVER' ||
                 addedCompany.result.company.toUpperCase() === 'APPLE' ||
                 addedCompany.result.company.toUpperCase() === 'NIKE' ||
@@ -47,7 +48,7 @@ export default class register extends React.Component  {
     checkValidationForm() {
         if(this.state.company !== '',
         this.state.name !== '',
-        staticUtils.validateEmail(this.state.email),
+        Utils.validateEmail(this.state.email),
         (this.state.rePassword !== '' && this.state.password === this.state.rePassword)) { return true }
     }
     submitRegister() {
@@ -57,7 +58,7 @@ export default class register extends React.Component  {
     getValidationState(e) {
         e.preventDefault();
         this.state.rePassword !== this.state.password ? swal("Ops!", "As senhas não conferem.", "error") : '';
-        staticUtils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
+        Utils.validateEmail(this.state.email) ? '' : swal("Ops!", "Preencha um email válido.", "error");
         this.state.rePassword === '' ? swal("Ops!", "Repita sua senha.", "error") : '';
         this.state.password === '' ? swal("Ops!", "Preencha sua senha.", "error") : '';
         this.state.email === '' ? swal("Ops!", "Preencha seu e-mail.", "error") : '';
