@@ -62,7 +62,16 @@ export default class Product extends React.Component {
         if(element > 0){
             let qtd = this.state.qtd + parseInt(element.substring(element.length - 1), 10);
             
-            if(SessionManager.getSessionID()){Services.registerDataCart(name, price, element, productId)};
+            if(SessionManager.getSessionID()){
+                Services.registerDataCart(name, price, element, productId)
+            }else {
+                let data = [];
+                if(sessionStorage.getItem('cartItem')){
+                    data = JSON.parse(sessionStorage.getItem('cartItem'));
+                }
+                data.push(`${name},${price},${element},${productId}`);
+                sessionStorage.setItem('cartItem', JSON.stringify(data));
+            }
 
             this.setState({
                 isCheckoutVisible: true,
@@ -86,8 +95,27 @@ export default class Product extends React.Component {
         }
      }
   }
+  checkCartItemSession(){
+      let response = Utils.getCartItemSession();
+      if(response){
+        let qtd = 0;
+        for (let i = 0; i < response.length; i++) { 
+            qtd = qtd + parseInt(response[i].quantity, 10)
+            if(SessionManager.getSessionID()){
+                Services.registerDataCart(response[i].name, response[i].price, response[i].quantity, response[i].productId)
+                sessionStorage.removeItem('cartItem');
+            }
+         }
+        
+        this.setState({
+            isCheckoutVisible: true,
+            qtd: qtd
+        });
+      }
+  }
   componentWillMount() {
     this.getProduct();
+    this.checkCartItemSession();
     if(this.state.isAuthenticated){this.getQuantityCart()};
   }
   render() {
