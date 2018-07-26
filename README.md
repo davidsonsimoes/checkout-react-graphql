@@ -1,4 +1,4 @@
-Teste técnico GDP, esse teste consiste na criação de uma solução de venda de anúncios com promoções especiais para empresas.
+Esse código consiste na criação de uma solução de venda de anúncios com promoções especiais para empresas específicas.
 
 ## Ferramentas e Serviços utilizados
 
