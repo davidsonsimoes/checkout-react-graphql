@@ -5,6 +5,7 @@ import swal from 'sweetalert';
 import styled from 'styled-components';
 import Utils, { SessionManager }  from '../utils/Utils';
 import Services from '../services/Services';
+import { Transaction } from '../models/Transaction';
 
 const Image = styled.img`
   max-width: 242px;
@@ -57,25 +58,18 @@ export default class Product extends React.Component {
             });
         }
     }
-    handleProduct(id, name, price, productId){
-        const element = document.querySelector(`#${id}`).value;
-        if(element > 0){
-            let qtd = this.state.qtd + parseInt(element.substring(element.length - 1), 10);
-            
-            if(SessionManager.getSessionID()){
-                Services.registerDataCart(name, price, element, productId)
-            }else {
-                let data = [];
-                if(sessionStorage.getItem('cartItem')){
-                    data = JSON.parse(sessionStorage.getItem('cartItem'));
-                }
-                data.push(`${name},${price},${element},${productId}`);
-                sessionStorage.setItem('cartItem', JSON.stringify(data));
+    validateProduct(id, name, price, productId){
+        let quantity = document.querySelector(`#${id}`).value;
+        if(quantity > 0){
+            let transaction = new Transaction(name, price, productId, this.isAuthenticated, parseInt(quantity));
+            if(this.isAuthenticated){
+                Services.registerDataCart(transaction.product, transaction.price, transaction.quantity, transaction.productId)
+            } else {
+                Services.registerSessionCart(transaction.product, transaction.price, transaction.quantity, transaction.productId)
             }
-
             this.setState({
                 isCheckoutVisible: true,
-                qtd: qtd
+                qtd: quantity
             });
         } else {
             swal("Ops!", "Escolha a quantidade do produto.", "error");
@@ -141,7 +135,7 @@ export default class Product extends React.Component {
                                     <FormControl type="number" id={id} placeholder="Ex: 1" />
                                 </Col>
                                 <Col xs={6} md={6}>
-                                    <Button bsStyle="success" onClick={() => this.handleProduct(id, name, price, productId)}>COMPRAR</Button>
+                                    <Button bsStyle="success" onClick={() => this.validateProduct(id, name, price, productId)}>COMPRAR</Button>
                                 </Col>
                             </FormGroup>
                         </Row>

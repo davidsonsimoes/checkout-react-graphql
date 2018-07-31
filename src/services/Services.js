@@ -116,6 +116,14 @@ export default class Services {
             }`
         });
     }
+    static registerSessionCart(name, price, qtd, productId){
+        let data = [];
+        if(sessionStorage.getItem('cartItem')){
+            data = JSON.parse(sessionStorage.getItem('cartItem'));
+        }
+        data.push(`${name},${price},${qtd},${productId}`);
+        sessionStorage.setItem('cartItem', JSON.stringify(data));
+    }
     static async getLogin(email) {
         let data = [];
         await client.query({
