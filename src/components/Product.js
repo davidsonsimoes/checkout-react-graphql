@@ -63,9 +63,9 @@ export default class Product extends React.Component {
         if(quantity > 0){
             let transaction = new Transaction(name, price, productId, this.isAuthenticated, parseInt(quantity));
             if(this.isAuthenticated){
-                Services.registerDataCart(transaction.product, transaction.price, transaction.quantity, transaction.productId)
+                Services.registerDataCart(transaction.getName(), transaction.getPrice(), transaction.getQuantity(), transaction.getProductId())
             } else {
-                Services.registerSessionCart(transaction.product, transaction.price, transaction.quantity, transaction.productId)
+                Services.registerSessionCart(transaction.getName(), transaction.getPrice(), transaction.getQuantity(), transaction.getProductId())
             }
             this.setState({
                 isCheckoutVisible: true,
