@@ -1,6 +1,6 @@
 # [Checkout React + GraphQl](https://github.com/davidsonsimoes/checkout-react-graphql) [![DeepScan grade](https://deepscan.io/api/teams/1369/projects/3548/branches/31507/badge/grade.svg)](https://deepscan.io/dashboard#view=project&tid=1369&pid=3548&bid=31507)
 
-Esse código consiste na criação de uma solução de venda de anúncios com promoções especiais para empresas específicas.
+<p>Esse código consiste na criação de uma solução de venda de anúncios com promoções especiais para empresas específicas.</p>
 
 ## Ferramentas e Serviços utilizados
 
